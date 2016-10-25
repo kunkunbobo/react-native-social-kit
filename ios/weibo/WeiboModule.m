@@ -217,29 +217,30 @@ RCT_EXPORT_METHOD(share: (NSDictionary *)config : (RCTResponseSenderBlock)callba
   }
 }
 
+
 - (void)getUserInfo:(NSDictionary*)result{
     
-     __block NSDictionary* params = result;
-    
+    __block NSDictionary* params = result;
+    NSDictionary *p = [NSDictionary dictionaryWithObjectsAndKeys:[params objectForKey:@"accessToken"],@"access_token",[params objectForKey:@"uid"],@"uid", nil];
     [WBHttpRequest requestWithURL:@"https://api.weibo.com/2/users/show.json"
                        httpMethod:@"GET"
-                           params:params
+                           params:p
                             queue:nil
             withCompletionHandler:^(WBHttpRequest *httpRequest, id result, NSError *error) {
-        
-        if (!error && result) {
-            
-            NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
-            [dic setObject:result forKey:@"userInfo"];
-            authCallback(@[dic]);
-            authCallback = nil;
-            
-        }
-        else{
-            authCallback(@[params]);
-            authCallback = nil;
-        }
-    }];
+                
+                if (!error && result) {
+                    
+                    NSMutableDictionary *dic = [NSMutableDictionary dictionaryWithDictionary:params];
+                    [dic setObject:result forKey:@"userInfo"];
+                    authCallback(@[dic]);
+                    authCallback = nil;
+                    
+                }
+                else{
+                    authCallback(@[params]);
+                    authCallback = nil;
+                }
+            }];
     
 }
 + (BOOL)handleOpenURL:(NSURL *)url {
